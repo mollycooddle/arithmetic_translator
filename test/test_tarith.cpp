@@ -56,14 +56,28 @@ TEST(calculator, test_culculation)
 {
 
 	Calculator yr("230+993*12");
+	yr.stackFilling();
+	yr.calculation();
 
-	EXPECT_EQ(12146, yr.calculation());
+	EXPECT_EQ(12146, std::stod(yr[0]));
+}
+
+TEST(calculator, test_culculation_2)
+{
+
+	Calculator yr("230+993*12-2");
+	yr.stackFilling();
+	yr.calculation();
+
+	EXPECT_EQ(12144, std::stod(yr[0]));
 }
 
 TEST(calculator, test_many_operations)
 {
 
 	Calculator yr("2-56*2+4/2+45/9+5-2*6");
+	yr.stackFilling();
+	yr.calculation();
 
-	EXPECT_EQ(-110, yr.calculation());
+	EXPECT_EQ(-110, std::stod(yr[0]));
 }

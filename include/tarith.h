@@ -27,7 +27,7 @@ public:
 
 			while ((terms[i + 1] != "+") && (terms[i + 1] != "-") && (terms[i + 1] != "*") && (terms[i + 1] != "/") && \
 				   (terms[i] != "+") && (terms[i] != "-") && (terms[i] != "*") && (terms[i] != "/")) {
-				for (std::string j : numbers) {
+				for (std::string& j : numbers) {
 					if (i + 1 >= size()) {
 						break;
 					}
@@ -58,6 +58,8 @@ public:
 	}
 
 	void stackFilling() {
+		std::vector<std::string> temp;
+
 		for (int i = 0; i < size(); i++) {
 			if ((terms[i] == "*") || (terms[i] == "/")) {
 				stack.push(terms[i]);
@@ -67,11 +69,28 @@ public:
 			if ((terms[i] == "+") || (terms[i] == "-")) {
 				if (!stack.empty())
 					if (stack.top() == "*" || stack.top() == "/") {
-						calculation();
-					}
 
-				stack.push(terms[i]);
-				terms.erase(terms.begin() + i);
+						while (i < size()) {
+							temp.push_back(terms[i]);
+							terms.erase(terms.begin() + i);
+						}
+
+						//for (int i = 0; i < temp.size(); i++)
+						//	std::cout << temp[i] << std::endl;
+						//std::cout << "\n";
+						//for (int i = 0; i < size(); i++)
+						//	std::cout << terms[i] << std::endl;
+
+						calculation();
+
+						for (int i = 0; i < temp.size(); i++) {
+							terms.push_back(temp[i]);
+						}
+						temp.clear();
+						i = 1;
+					}
+					stack.push(terms[i]);
+					terms.erase(terms.begin() + i);
 			}
 		}
 	}
@@ -80,16 +99,17 @@ public:
 		std::cout << stack.top() << std::endl;
 	}
 
-	double calculation() {
-		stackFilling();
+	void calculation() {
+		std::vector<std::string> result;
 
-		while (size() != 1) {
+			while (size() >= 2) {
 			if (stack.empty())
 				break;
 
 			if (stack.top() == "*") {
 				terms[size() - 2] = std::to_string(std::stod(terms[size() - 1]) * std::stod(terms[size() - 2]));
-				
+				//result.push_back(std::to_string(std::stod(terms[size() - 1]) * std::stod(terms[size() - 2])));
+
 				stack.pop();
 				terms.pop_back();
 			}
@@ -99,6 +119,7 @@ public:
 
 			if (stack.top() == "/") {
 				terms[size() - 2] = std::to_string(std::stod(terms[size() - 2]) / std::stod(terms[size() - 1]));
+				//result.push_back(std::to_string(std::stod(terms[size() - 2]) / std::stod(terms[size() - 1])));
 
 				stack.pop();
 				terms.pop_back();
@@ -109,6 +130,7 @@ public:
 
 			if (stack.top() == "+") {
 				terms[size() - 2] = std::to_string(std::stod(terms[size() - 1]) + std::stod(terms[size() - 2]));
+				//result.push_back(std::to_string(std::stod(terms[size() - 1]) + std::stod(terms[size() - 2])));
 
 				stack.pop();
 				terms.pop_back();
@@ -119,6 +141,7 @@ public:
 
 			if (stack.top() == "-") {
 				terms[size() - 2] = std::to_string(std::stod(terms[size() - 2]) - std::stod(terms[size() - 1]));
+				//result.push_back(std::to_string(std::stod(terms[size() - 2]) - std::stod(terms[size() - 1])));
 
 				stack.pop();
 				terms.pop_back();
@@ -129,7 +152,7 @@ public:
 
 		}
 
-		return std::stod(terms[0]);
+		//return std::stod(terms[0]);
 	}
 
 	std::string& operator[](size_t ind)
