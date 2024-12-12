@@ -8,10 +8,12 @@
 class Calculator{
 	std::vector<std::string> terms;
 	std::stack<std::string> stack;
+	int stackSize = 0;
 public:
 	Calculator(std::string str = "")
 	{
 		std::string tmp;
+
 		for (int i = 0; i < str.size(); i++) {
 			tmp += str[i];
 			terms.push_back(tmp);
@@ -30,7 +32,7 @@ public:
 				   (terms[i] != "+") && (terms[i] != "-") && (terms[i] != "*") && (terms[i] != "/") && \
 				   (terms[i] != "(") && (terms[i] != ")")) {
 				for (std::string& j : numbers) {
-					if (i + 1 >= size()) {
+					if (i >= size() - 1) {
 						break;
 					}
 
@@ -40,12 +42,35 @@ public:
 					}
 				}
 
-				if (i + 1 >= size()) {
+				if (i >= size() - 1) {
 					break;
 				}
 			}
-			
-			if (i + 1 >= size()) {
+
+			for (int u = 0; u < size(); u++)
+				std::cout << terms[u] << " ";
+				std::cout << std::endl;
+
+			int oper = 0;
+
+			if ((terms[0] == "+" || terms[0] == "-" || terms[0] == "*" || terms[0] == "/") || \
+				(terms[size() - 1] == "+" || terms[size() - 1] == "-" || terms[size() - 1] == "*" || terms[size() - 1] == "/"))
+				throw "Wrong expression";
+
+			for (int j = 0; j < size() - 1; j++) {
+				if ((terms[j] == "+" || terms[j] == "-" || terms[j] == "*" || terms[j] == "/") && \
+					(terms[j + 1] == "+" || terms[j + 1] == "-" || terms[j + 1] == "*" || terms[j + 1] == "/")) {
+					oper++;
+				}
+
+				if (oper != 0)
+					throw "Wrong expression";
+
+				oper = 0;
+			}
+
+
+			if (i >= size() - 1) {
 				break;
 			}
 
@@ -65,12 +90,33 @@ public:
 
 	void stackFilling() {
 		std::vector<std::string> temp;
+		int BracketsFront = 0;
+		int BracketsEnd = 0;
+
+		int point = 0;
+		for (int j = 0; j < size(); j++) {
+			std::string str = terms[j];
+
+			if (terms[j][0] =='.' || terms[j][str.size() - 1] == '.')
+				throw "Wrong expression";
+
+			for (int h = 0; h < str.size(); h++) {
+				if (str[h] == '.')
+					point++;
+			}
+
+			if (point > 1)
+				throw "Wrong expression";
+			point = 0;
+
+		}
+
 
 		for (int i = 0; i < size(); i++) {
 			if ((terms[i] == "*") || (terms[i] == "/")) {
 				stack.push(terms[i]);
 				terms.erase(terms.begin() + i);
-				
+				stackSize++;
 			}
 
 			if ((terms[i] == "+") || (terms[i] == "-")) {
@@ -90,21 +136,36 @@ public:
 
 						calculation();
 
-						for (int i = 0; i < temp.size(); i++) {
-							terms.push_back(temp[i]);
+						for (int j = 0; j < temp.size(); j++) {
+							terms.push_back(temp[j]);
 						}
 						temp.clear();
 						i = 1;
 					}
-					stack.push(terms[i]);
-					terms.erase(terms.begin() + i);
-			}
-
-			if ((terms[i] == "(") || (terms[i] == ")")) {
 				stack.push(terms[i]);
 				terms.erase(terms.begin() + i);
+				stackSize++;
+			}
+
+			if ((i + 1) < size() - 1)
+				if (terms[i] == "(" && terms[i + 1] == ")")
+					throw "Wrong expression";
+
+			if (terms[i] == "(") {
+				stack.push(terms[i]);
+				terms.erase(terms.begin() + i);
+				BracketsFront++;
+			}
+
+			if (terms[i] == ")") {
+				stack.push(terms[i]);
+				terms.erase(terms.begin() + i);
+				BracketsEnd++;
 			}
 		}
+
+		if (BracketsEnd != BracketsFront)
+			throw "Wrong expression";
 	}
 
 	void print_stack() {
@@ -112,7 +173,6 @@ public:
 	}
 
 	void calculation() {
-		std::vector<std::string> result;
 
 		while (size() >= 2) {
 			if (stack.empty())
@@ -120,7 +180,6 @@ public:
 
 			if (stack.top() == "*") {
 				terms[size() - 2] = std::to_string(std::stod(terms[size() - 1]) * std::stod(terms[size() - 2]));
-				//result.push_back(std::to_string(std::stod(terms[size() - 1]) * std::stod(terms[size() - 2])));
 
 				stack.pop();
 				terms.pop_back();
@@ -130,8 +189,11 @@ public:
 				break;
 
 			if (stack.top() == "/") {
+
+				if (terms[size() - 1] == "0")
+					throw "Wrong expression";
+
 				terms[size() - 2] = std::to_string(std::stod(terms[size() - 2]) / std::stod(terms[size() - 1]));
-				//result.push_back(std::to_string(std::stod(terms[size() - 2]) / std::stod(terms[size() - 1])));
 
 				stack.pop();
 				terms.pop_back();
@@ -142,7 +204,6 @@ public:
 
 			if (stack.top() == "+") {
 				terms[size() - 2] = std::to_string(std::stod(terms[size() - 1]) + std::stod(terms[size() - 2]));
-				//result.push_back(std::to_string(std::stod(terms[size() - 1]) + std::stod(terms[size() - 2])));
 
 				stack.pop();
 				terms.pop_back();
@@ -153,7 +214,6 @@ public:
 
 			if (stack.top() == "-") {
 				terms[size() - 2] = std::to_string(std::stod(terms[size() - 2]) - std::stod(terms[size() - 1]));
-				//result.push_back(std::to_string(std::stod(terms[size() - 2]) - std::stod(terms[size() - 1])));
 
 				stack.pop();
 				terms.pop_back();

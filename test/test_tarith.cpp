@@ -166,9 +166,19 @@ TEST(calculator_float, test_many_operations)
 	EXPECT_EQ(-128, std::stod(yr[0]));
 }
 
+TEST(calculator_float, test_mul_div_plus_mul_div)
+{
+
+	Calculator yr("20*2/10+3*10/5");
+	yr.stackFilling();
+	yr.calculation();
+
+	EXPECT_EQ(10, std::stod(yr[0]));
+}
+
 // add ()
 
-TEST(calculator_skobki, test_many_operations)
+TEST(calculator_brackets, test_brackets)
 {
 
 	Calculator yr("2+3*(2+3)");
@@ -176,4 +186,59 @@ TEST(calculator_skobki, test_many_operations)
 	yr.calculation();
 
 	EXPECT_EQ(17, std::stod(yr[0]));
+}
+
+//ERRORS
+
+TEST(calculator_error, test_brackets)
+{
+	Calculator yr("2+3*(2)+3)");
+
+	ASSERT_ANY_THROW(yr.stackFilling());
+}
+
+TEST(calculator_error, test_brackets_2)
+{
+	Calculator yr("()2+3*(2+3)");
+
+	ASSERT_ANY_THROW(yr.stackFilling());
+}
+
+TEST(calculator_error, test_point)
+{
+	Calculator yr("2..0+3*(2+3)");
+	ASSERT_ANY_THROW(yr.stackFilling());
+}
+
+TEST(calculator_error, test_point_2)
+{
+	Calculator yr("2.0+3.1.2*(2+3)");
+	ASSERT_ANY_THROW(yr.stackFilling());
+}
+
+TEST(calculator_error, test_point_3)
+{
+	Calculator yr(".03+3*(2+3)");
+	ASSERT_ANY_THROW(yr.stackFilling());
+}
+
+TEST(calculator_error, test_point_4)
+{
+	Calculator yr("3.+3*(2+3)");
+	ASSERT_ANY_THROW(yr.stackFilling());
+}
+
+TEST(calculator_error, test_operations)
+{
+	ASSERT_ANY_THROW(Calculator yr("2+*3"));
+}
+
+TEST(calculator_error, test_operations_2)
+{
+	ASSERT_ANY_THROW(Calculator yr("+2*3"));
+}
+
+TEST(calculator_error, test_operations_3)
+{
+	ASSERT_ANY_THROW(Calculator yr("2+3/"));
 }
