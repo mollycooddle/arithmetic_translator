@@ -18,15 +18,17 @@ public:
 			tmp.clear();
 		}
 
-		std::vector<std::string> numbers = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-		std::vector<std::string> operations = { "+", "-", "*", "/"};
+		std::vector<std::string> numbers = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."};
+		std::vector<std::string> operations = { "+", "-", "*", "/", "(", ")"};
 
 		int i = 0;
 		while(i < size() - 1)
 		{
 
-			while ((terms[i + 1] != "+") && (terms[i + 1] != "-") && (terms[i + 1] != "*") && (terms[i + 1] != "/") && \
-				   (terms[i] != "+") && (terms[i] != "-") && (terms[i] != "*") && (terms[i] != "/")) {
+			while ((terms[i + 1] != "+") && (terms[i + 1] != "-") && (terms[i + 1] != "*") && (terms[i + 1] != "/") &&  \
+				   (terms[i + 1] != "(") && (terms[i + 1] != ")") && \
+				   (terms[i] != "+") && (terms[i] != "-") && (terms[i] != "*") && (terms[i] != "/") && \
+				   (terms[i] != "(") && (terms[i] != ")")) {
 				for (std::string& j : numbers) {
 					if (i + 1 >= size()) {
 						break;
@@ -53,6 +55,10 @@ public:
 				}
 			}
 
+			//for (int i = 0; i < size(); i++)
+			//	std::cout << terms[i] << " ";
+			//std::cout << std::endl;
+
 			i++;
 		}
 	}
@@ -66,6 +72,7 @@ public:
 				terms.erase(terms.begin() + i);
 				
 			}
+
 			if ((terms[i] == "+") || (terms[i] == "-")) {
 				if (!stack.empty())
 					if (stack.top() == "*" || stack.top() == "/") {
@@ -92,6 +99,11 @@ public:
 					stack.push(terms[i]);
 					terms.erase(terms.begin() + i);
 			}
+
+			if ((terms[i] == "(") || (terms[i] == ")")) {
+				stack.push(terms[i]);
+				terms.erase(terms.begin() + i);
+			}
 		}
 	}
 
@@ -102,7 +114,7 @@ public:
 	void calculation() {
 		std::vector<std::string> result;
 
-			while (size() >= 2) {
+		while (size() >= 2) {
 			if (stack.empty())
 				break;
 
@@ -149,6 +161,14 @@ public:
 
 			if (stack.empty())
 				break;
+
+			if (stack.top() == ")") {
+				stack.pop();
+			}
+
+			if (stack.top() == "(") {
+				stack.pop();
+			}
 
 		}
 
