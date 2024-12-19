@@ -47,15 +47,15 @@ public:
 				}
 			}
 
-			for (int u = 0; u < size(); u++)
-				std::cout << terms[u] << " ";
-				std::cout << std::endl;
+			//for (int u = 0; u < size(); u++)
+			//	std::cout << terms[u] << " ";
+			//	std::cout << std::endl;
 
 			int oper = 0;
 
 			if ((terms[0] == "+" || terms[0] == "-" || terms[0] == "*" || terms[0] == "/") || \
 				(terms[size() - 1] == "+" || terms[size() - 1] == "-" || terms[size() - 1] == "*" || terms[size() - 1] == "/"))
-				throw "Wrong expression";
+				throw std::invalid_argument("Wrong expression");
 
 			for (int j = 0; j < size() - 1; j++) {
 				if ((terms[j] == "+" || terms[j] == "-" || terms[j] == "*" || terms[j] == "/") && \
@@ -64,7 +64,7 @@ public:
 				}
 
 				if (oper != 0)
-					throw "Wrong expression";
+					throw std::invalid_argument("Wrong expression");
 
 				oper = 0;
 			}
@@ -98,7 +98,7 @@ public:
 			std::string str = terms[j];
 
 			if (terms[j][0] =='.' || terms[j][str.size() - 1] == '.')
-				throw "Wrong expression";
+				throw std::invalid_argument("Wrong expression");
 
 			for (int h = 0; h < str.size(); h++) {
 				if (str[h] == '.')
@@ -106,7 +106,7 @@ public:
 			}
 
 			if (point > 1)
-				throw "Wrong expression";
+				throw std::invalid_argument("Wrong expression");
 			point = 0;
 
 		}
@@ -128,12 +128,6 @@ public:
 							terms.erase(terms.begin() + i);
 						}
 
-						//for (int i = 0; i < temp.size(); i++)
-						//	std::cout << temp[i] << std::endl;
-						//std::cout << "\n";
-						//for (int i = 0; i < size(); i++)
-						//	std::cout << terms[i] << std::endl;
-
 						calculation();
 
 						for (int j = 0; j < temp.size(); j++) {
@@ -149,7 +143,7 @@ public:
 
 			if ((i + 1) < size() - 1)
 				if (terms[i] == "(" && terms[i + 1] == ")")
-					throw "Wrong expression";
+					throw std::invalid_argument("Wrong expression");
 
 			if (terms[i] == "(") {
 				stack.push(terms[i]);
@@ -160,12 +154,30 @@ public:
 			if (terms[i] == ")") {
 				stack.push(terms[i]);
 				terms.erase(terms.begin() + i);
+
+				if (!stack.empty())
+					if (stack.top() == ")")
+						if (i < size()) {
+
+						while (i < size()) {
+							temp.push_back(terms[i]);
+							terms.erase(terms.begin() + i);
+						}
+
+						calculation();
+
+						for (int j = 0; j < temp.size(); j++) {
+							terms.push_back(temp[j]);
+						}
+						temp.clear();
+						i = 0;
+					}
 				BracketsEnd++;
 			}
 		}
 
 		if (BracketsEnd != BracketsFront)
-			throw "Wrong expression";
+			throw std::invalid_argument("Wrong expression");
 	}
 
 	void print_stack() {
@@ -173,6 +185,24 @@ public:
 	}
 
 	void calculation() {
+
+		//std::stack<std::string> tmp;
+		//
+		//
+		//for (int i = 0; i < 4; i++) {
+		//	tmp.push(stack.top());
+		//	std::cout << tmp.top() << " ";
+		//	stack.pop();
+		//}
+		//std::cout << std::endl;
+
+		//for (int i = 0; i < 4; i++) {
+		//	stack.push(tmp.top());
+		//	std::cout << stack.top() << " ";
+		//	tmp.pop();
+		//}
+		//std::cout << std::endl;
+
 
 		while (size() >= 2) {
 			if (stack.empty())
@@ -190,8 +220,8 @@ public:
 
 			if (stack.top() == "/") {
 
-				if (terms[size() - 1] == "0")
-					throw "Wrong expression";
+				if (std::stod(terms[size() - 1]) == 0 || terms[size() - 1] == "0" || terms[size() - 1] == std::to_string(1-1))
+					throw std::invalid_argument("Wrong expression");
 
 				terms[size() - 2] = std::to_string(std::stod(terms[size() - 2]) / std::stod(terms[size() - 1]));
 
@@ -229,6 +259,13 @@ public:
 			if (stack.top() == "(") {
 				stack.pop();
 			}
+
+			//for (int i = 0; i < size(); i++) {
+			//	std::cout << terms[i] << " ";
+			//}
+			//std::cout << std::endl;
+			//std::cout << std::endl;
+			//std::cout << std::endl;
 
 		}
 

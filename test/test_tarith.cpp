@@ -188,6 +188,14 @@ TEST(calculator_brackets, test_brackets)
 	EXPECT_EQ(17, std::stod(yr[0]));
 }
 
+TEST(calculator_brackets, test_front_brackets)
+{
+	Calculator yr("(2-1)*2");
+	yr.stackFilling();
+	yr.calculation();
+	EXPECT_EQ(2, std::stod(yr[0]));
+}
+
 //ERRORS
 
 TEST(calculator_error, test_brackets)
@@ -241,4 +249,18 @@ TEST(calculator_error, test_operations_2)
 TEST(calculator_error, test_operations_3)
 {
 	ASSERT_ANY_THROW(Calculator yr("2+3/"));
+}
+
+TEST(calculator_error, test_null_1)
+{
+	Calculator yr("1/(1-1)");
+	yr.stackFilling();
+	ASSERT_ANY_THROW(yr.calculation());
+}
+
+TEST(calculator_error, test_null_2)
+{
+	Calculator yr("1/(10-10)");
+	yr.stackFilling();
+	ASSERT_ANY_THROW(yr.calculation());
 }
