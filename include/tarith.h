@@ -47,12 +47,7 @@ public:
 				}
 			}
 
-			//for (int u = 0; u < size(); u++)
-			//	std::cout << terms[u] << " ";
-			//	std::cout << std::endl;
-
 			int oper = 0;
-
 			if ((terms[0] == "+" || terms[0] == "-" || terms[0] == "*" || terms[0] == "/") || \
 				(terms[size() - 1] == "+" || terms[size() - 1] == "-" || terms[size() - 1] == "*" || terms[size() - 1] == "/"))
 				throw std::invalid_argument("Wrong expression");
@@ -74,24 +69,38 @@ public:
 				break;
 			}
 
+			if ((terms[i] != "+") && (terms[i] != "-") && (terms[i] != "*") && (terms[i] != "/") && \
+				(terms[i] != "(") && (terms[i] != ")") && (terms[i + 1] == "(" || terms[i + 1] == "(")) {
+				throw std::invalid_argument("Wrong expression");
+			}
+
 			for (std::string oper : operations) {
 				if (terms[i] == oper) {
 					continue;
 				}
 			}
 
-			//for (int i = 0; i < size(); i++)
-			//	std::cout << terms[i] << " ";
-			//std::cout << std::endl;
-
 			i++;
 		}
+
+		int BracketsCounter = 0;
+		for (int i = 0; i < size(); i++) {
+
+			if (terms[i] == "(")
+				BracketsCounter++;
+			else if (terms[i] == ")")
+				BracketsCounter--;
+
+			if (BracketsCounter < 0)
+				throw std::invalid_argument("Wrong expression");
+		}
+
+		if (BracketsCounter != 0)
+			throw std::invalid_argument("Wrong expression");
 	}
 
 	void stackFilling() {
 		std::vector<std::string> temp;
-		int BracketsFront = 0;
-		int BracketsEnd = 0;
 
 		int point = 0;
 		for (int j = 0; j < size(); j++) {
@@ -148,7 +157,6 @@ public:
 			if (terms[i] == "(") {
 				stack.push(terms[i]);
 				terms.erase(terms.begin() + i);
-				BracketsFront++;
 			}
 
 			if (terms[i] == ")") {
@@ -172,12 +180,8 @@ public:
 						temp.clear();
 						i = 0;
 					}
-				BracketsEnd++;
 			}
 		}
-
-		if (BracketsEnd != BracketsFront)
-			throw std::invalid_argument("Wrong expression");
 	}
 
 	void print_stack() {
@@ -185,24 +189,6 @@ public:
 	}
 
 	void calculation() {
-
-		//std::stack<std::string> tmp;
-		//
-		//
-		//for (int i = 0; i < 4; i++) {
-		//	tmp.push(stack.top());
-		//	std::cout << tmp.top() << " ";
-		//	stack.pop();
-		//}
-		//std::cout << std::endl;
-
-		//for (int i = 0; i < 4; i++) {
-		//	stack.push(tmp.top());
-		//	std::cout << stack.top() << " ";
-		//	tmp.pop();
-		//}
-		//std::cout << std::endl;
-
 
 		while (size() >= 2) {
 			if (stack.empty())
@@ -259,17 +245,7 @@ public:
 			if (stack.top() == "(") {
 				stack.pop();
 			}
-
-			//for (int i = 0; i < size(); i++) {
-			//	std::cout << terms[i] << " ";
-			//}
-			//std::cout << std::endl;
-			//std::cout << std::endl;
-			//std::cout << std::endl;
-
 		}
-
-		//return std::stod(terms[0]);
 	}
 
 	std::string& operator[](size_t ind)
