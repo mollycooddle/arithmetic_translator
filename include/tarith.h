@@ -246,6 +246,9 @@ public:
 				stack.pop();
 			}
 		}
+
+		if (size()<=0)
+			throw std::invalid_argument("Wrong expression");
 	}
 
 	std::string& operator[](size_t ind)

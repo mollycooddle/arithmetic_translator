@@ -5,14 +5,10 @@ void main()
 {
     std::string strng;
 
-    int f = 0;
-    while (f == 0) {
-
-        if (strng == "0")
-            return;
+    while (strng != "0") {
 
         try {
-            std::cout << "Enter an expression with *, /, +, -, (), float/int numbers(write 0 to complete):" << std::endl;
+            std::cout << "Enter an expression (keyboard consists of digits, brackets, +, -, *, /, .):" << std::endl;
             std::cin >> strng;
             Calculator yr(strng);
             yr.stackFilling();

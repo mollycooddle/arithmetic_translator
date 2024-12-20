@@ -267,3 +267,10 @@ TEST(calculator_error, test_empty_mul)
 {
 	ASSERT_ANY_THROW(Calculator yr("4(2-1)"));
 }
+
+TEST(calculator_error, test_null_2121)
+{
+	Calculator yr("()");
+	yr.stackFilling();
+	ASSERT_ANY_THROW(yr.calculation());
+}
