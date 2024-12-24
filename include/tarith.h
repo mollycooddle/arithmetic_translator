@@ -13,6 +13,10 @@ public:
 	Calculator(std::string str = "")
 	{
 		std::string tmp;
+		std::vector<std::string> numbers = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "." };
+		std::vector<std::string> operations = { "+", "-", "*", "/", "(", ")" };
+		std::vector<std::string> ban = { "~", "!", "@", "#", "$", "%", "^", "&", "=", ";", "№", ":", "?", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[" \
+										"]", "{", "}", "a", "s", "d", "f", "g", "h", "j", "k", "l", "z", "x", "c", "v", "b", "n", "m", ",", "<", ">" };
 
 		for (int i = 0; i < str.size(); i++) {
 			tmp += str[i];
@@ -20,8 +24,12 @@ public:
 			tmp.clear();
 		}
 
-		std::vector<std::string> numbers = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."};
-		std::vector<std::string> operations = { "+", "-", "*", "/", "(", ")"};
+		for (int i = 0; i < size(); i++) {
+			for (std::string& j : ban) {
+				if (terms[i] == j)
+					throw std::invalid_argument("Wrong expression");
+			}
+		}
 
 		int i = 0;
 		while(i < size() - 1)
